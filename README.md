@@ -54,21 +54,21 @@ Then, in TeXmaker, add a new user command with the command (In "User" menu) :
 _______________________________________________________
 Usage
 =
-Run the script 'texmaker-note.py' from TeXmaker user commands or from where you want (desktop lancher, shortcut, ...)
+1. Run the script 'texmaker-note.py' from TeXmaker user commands or from where you want (desktop lancher, shortcut, ...)
 
-A Xournal window will open. Draw what you have to draw, then type 'Ctrl + E' to export your figure in PDF (it will be save automatically in the correct directory so don't change default saving directory), then 'Ctrl + S' and 'Ctrl + Q' to save and quit Xournal.
+2. A Xournal window will open. Draw what you have to draw, then type 'Ctrl + E' to export your figure in PDF (it will be save automatically in the correct directory so don't change default saving directory), then 'Ctrl + S' and 'Ctrl + Q' to save and quit Xournal.
 
-Now, the code '\includegraphics[scale=1]{img/img-1.pdf}' is stored in your clipboard, so you just have to copy it ('Ctrl + V') when you want in your .tex file to insert your figure.
+3. Now, the right code to include your figure (e.g. '\includegraphics[scale=1]{img/img-1.pdf}') is stored in your clipboard, you just have to paste it ('Ctrl + V') when you want in your .tex file.
 
-Please notice that exporting to PDF is mandatory to include the graphics in a .tex document. The window display an A4-size document, but it will automatically be cropped before inserting (margin are deleted).
+Please notice that exporting to PDF is mandatory to include the graphics in a .tex document. The window displays an A4-size document, but it will be automatically cropped before inserting (margin will be deleted).
 
-All PDF and xournal files are stored in an '/img' subdirectory of the current working directory (basically, the directory where your current .tex file is saved if you are running the script trough TeXmaker).
+All PDF and xournal files are stored in an '/img' subdirectory of the current working directory (basically, the directory where your current .tex file is saved if you are running the script through TeXmaker).
 
-You don't have to manage the number of your images : the first hand-written image genereted is called 'img-1.pdf', and other are automatically called 'img-2.pdf' etc. The index number of the next image to be genereated is stored in an 'index' file saved in '/img' subdirectory, so the script can remember where it stopped last time, even if you have restart your computer.
+You don't have to manage the number of your images : the first hand-written image genereted is called 'img-1.pdf', and other are automatically called 'img-2.pdf', 'img-3.pdf' etc. The index number of the next image to be genereated is stored in an 'index' file saved in '/img' subdirectory, so the script can remember where it stopped last time, even if you have restarted your computer.
 
 _______________________________________________________
 Ways to improve the script
 =
-For now, Xournal doesn't allow to save and export files directly from command line, the user has to do it himself and can only spare time by using shortcuts. In would be great to implement automatically saving and exporting while closing Xournal.
+For now, Xournal doesn't allow to save and export files directly from command line, thus the user has to do it himself and can only spare time by using shortcuts. It would be great to implement automatically saving and exporting while closing Xournal.
 
 The hook placing the right code ('\includegraphics[scale=1]{img/img-1.pdf}') in the clipboard is also boring, but it is the only way I founded to keep the script cross-platform.
