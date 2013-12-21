@@ -42,10 +42,13 @@ Installation
 Put all the scripts provided in their archive in a convenient directory, such as "texmaker-note" directory somewhere in you personnal folder.
 
 Then, give executions rights/permissions to all the scripts. In Linux/Unix, run the command :
+
   chmod -R 777 COMPLETE_PATH/texmaker-note
+  
 where COMPLETE_PATH is the absolute path of your directory beginning by '/' (e.g. /home/user)
 
 Then, in TeXmaker, add a new user command with the command (In "User" menu) :
+
   COMPLETE_PATH/texmaker-note/texmaker-note.py
 
 _______________________________________________________
