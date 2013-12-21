@@ -29,21 +29,21 @@ Written in Python, it is virtually compatible with Mac OS, Windows and all Linux
 _______________________________________________________
 Requirements
 =
-A LaTeX editor is strongly recommended, but not mandatory. I recommend TeXmaker, which is cross-platform and is one of the most "What You See Is What You Get" LaTeX editor. It allows to user to set highly customized macros and routines directly in the software. http://www.xm1math.net/texmaker/
+A LaTeX editor is strongly recommended, but not mandatory. I recommend TeXmaker, which is cross-platform and is one of the most "What You See Is What You Get" LaTeX editor. It allows the user to set highly customized macros and routines directly in the software. http://www.xm1math.net/texmaker/
 
-The package PDFcrop is mandatory to crop figures before inserting. It is provided by 'texlive-extra-utils' package on TeXlive distributions.
+The package PDFcrop is mandatory to crop figures before inserting them. It is provided by 'texlive-extra-utils' package on TeXlive distributions.
 
-Xournal is mandatory to draw manuscript figures. It is a free and cross-platform software too, which support advanced stylus features like eraser and pression sensibility. http://www.xm1math.net/texmaker/
+Xournal is mandatory to draw manuscript figures. It is a free and cross-platform software too, which supports advanced stylus features like eraser and pression sensibility. http://www.xm1math.net/texmaker/
 
 And of course, this script requires a Python runtime. http://www.python.org/
 _______________________________________________________
 Installation
 =
-Put all the scripts provided in the archive in a convenient directory, such as "texmaker-note" directory somewhere in you personnal folder.
+Put all the scripts provided in their archive in a convenient directory, such as "texmaker-note" directory somewhere in you personnal folder.
 
 Then, give executions rights/permissions to all the scripts. In Linux/Unix, run the command :
   chmod -R 777 COMPLETE_PATH/texmaker-note
-where COMPLETE_PATH is the absolute path of your directory.
+where COMPLETE_PATH is the absolute path of your directory beginning by '/' (e.g. /home/user)
 
 Then, in TeXmaker, add a new user command with the command (In "User" menu) :
   COMPLETE_PATH/texmaker-note/texmaker-note.py
