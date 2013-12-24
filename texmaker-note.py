@@ -30,6 +30,8 @@
 ## Loading modules ##
 import platform ,  os ,  sys ,  gzip ,  subprocess, pyperclip
 
+from subprocess import Popen, PIPE
+
 ## Functions ##
 # Create img directory if not exists
 def CreateDir():
@@ -51,7 +53,6 @@ def Index():
 def CreateXML(i):
     global xml
     xml = open("img/img-%s.xml" % i , "w")
-    return xml
 
 # Initial XML file initialization
 def WriteXML(i, xml):
@@ -102,6 +103,7 @@ def LatexInsert(i):
     # Copying outpout to clipboard
     pyperclip.copy("\includegraphics[scale=1]{img/img-%s.pdf}" % i)
     # Now the outpout is in your clipboard. You just have to Ctrl + V to paste it where you want.
+    spam=pyperclip.paste()
     
 # Increment index
 def Increment(i):
