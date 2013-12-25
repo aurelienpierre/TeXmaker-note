@@ -11,15 +11,15 @@
 #                                                   GNU Public License v3                           
 #                                                                          
 #                                        Copyright 2013 - Aurelien PIERRE                     
-#                       https://aurelienpierre.com - aurelien@aurelienpierre.com          
+# https://aurelienpierre.com - aurelien@aurelienpierre.com          
 #                                                                          
 #                                                                          
 # TeXmaker-note  is free software: you can redistribute it and/or modify 
-#    it under the terms of the GNU General Public License as published by     
-#        the Free Software Foundation, either version 3 of the License, or          
-#                               (at your option) any later version.                                      
+# it under the terms of the GNU General Public License as published by     
+# the Free Software Foundation, either version 3 of the License, or          
+# (at your option) any later version.                                      
 #                                                                                                                               
-#           This program is distributed in the hope that it will be useful,            
+# This program is distributed in the hope that it will be useful,            
 # but WITHOUT ANY WARRANTY; without even the implied warranty of           
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            
 # GNU General Public License for more details.                             
@@ -28,11 +28,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>    
 
 ## Loading modules ##
-import platform ,  os ,  sys ,  gzip ,  subprocess, pyperclip
-
-from subprocess import Popen, PIPE
+import platform ,  os ,  sys ,  gzip , subprocess , pyperclip
 
 ## Functions ##
+
 # Create img directory if not exists
 def CreateDir():
     if not os.path.exists("img"):
@@ -49,22 +48,19 @@ def Index():
     i = index.read()
     index.close()
     
-# Initial XML file creation
-def CreateXML(i):
-    global xml
-    xml = open("img/img-%s.xml" % i , "w")
-
 # Initial XML file initialization
-def WriteXML(i, xml):
-    xml.write('<?xml version="1.0" standalone="no"?>')
-    xml.write('<xournal version="0.4.5">')
-    xml.write('<title>Xournal document - see http://math.mit.edu/~auroux/software/xournal/</title>')
-    xml.write('<page width="612.00" height="792.00">')
-    xml.write('<background type="solid" color="white" style="plain" />')
-    xml.write('<layer>')
-    xml.write('</layer>')
-    xml.write('</page>')
-    xml.write('</xournal>')
+def WriteXML(i):
+    xml = open("img/img-%s.xml" % i , "w")
+    init = """<?xml version="1.0" standalone="no"?>
+    <xournal version="0.4.5">
+    <title>Xournal document - see http://math.mit.edu/~auroux/software/xournal/</title>
+    <page width="612.00" height="792.00">
+    <background type="solid" color="white" style="graph" />
+    <layer>
+    </layer>
+    </page>
+    </xournal>"""
+    xml.write(init)
     xml.close()
 
 # Initial XML file gzip compression
@@ -87,22 +83,24 @@ def OpenXournal(i):
     
 # Save in PDF
 # PDF saving from command line is not available in xournal for now
-# You have to type Ctrl + E in Xournal to export in PDF, then Crtl + S to save and Crtl + Q to exit the software
+# You have to type Ctrl + E in Xournal to export in PDF, then Ctrl + S to save and Ctrl + Q to exit the software
 
 # Crop PDF file
 def PdfCrop(i):
-    os.system("pdfcrop --pdftexcmd=pdftex --hires img/img-%s.pdf" % i)
+    subprocess.call("pdfcrop --pdftexcmd=pdftex --hires img/img-%s.pdf" % i, shell=True)
     os.rename("img/img-%s-crop.pdf" % i, "img/img-%s.pdf" % i)
     
 # Return LaTeX insertion code
 def LatexInsert(i):
     # Creating temp file for debugging purpose
-    #outpout = open("img/temp-%s.tmp" % i , "w")
-   # outpout.write("\includegraphics[scale=1]{img/img-%s.pdf}" % i)
-    #outpout.close()
+    # outpout = open("img/temp-%s.tmp" % i , "w")
+    # outpout.write("\includegraphics[scale=1]{img/img-%s.pdf}" % i)
+    # outpout.close()
+    
     # Copying outpout to clipboard
     pyperclip.copy("\includegraphics[scale=1]{img/img-%s.pdf}" % i)
     # Now the outpout is in your clipboard. You just have to Ctrl + V to paste it where you want.
+    # Try to paste automatically (doesn't work in every case)
     spam=pyperclip.paste()
     
 # Increment index
@@ -113,13 +111,14 @@ def Increment(i):
     index.close()
 
 ## Programm sequence ##
-CreateDir()
-Index()
-CreateXML(i)
-WriteXML(i, xml)
-GzipXML(i)
-CreateXOJ(i)
-OpenXournal(i)
-PdfCrop(i)
-LatexInsert(i)
-Increment(i)
+
+if __name__ == "__main__":
+    CreateDir()
+    Index()
+    WriteXML(i)
+    GzipXML(i)
+    CreateXOJ(i)
+    OpenXournal(i)
+    PdfCrop(i)
+    LatexInsert(i)
+    Increment(i)
