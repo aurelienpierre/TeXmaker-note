@@ -45,7 +45,7 @@ def Index():
         index.close()
     index = open("img/index", "r")
     global i
-    i = index.read()
+    i = index.read().strip()
     index.close()
     
 # Initial XML file initialization
@@ -74,7 +74,7 @@ def GzipXML(i):
 
 # Initial xournal file creation
 def CreateXOJ (i):
-    os.rename('img/img-%s.xml.gz' % i, 'img/img-%s.xoj' % i)
+    os.rename("img/img-%s.xml.gz" % i, "img/img-%s.xoj" % i)
     # Now, a blank initialized Xournal file has been created and is ready to work
     
 # Open xournal with our file
