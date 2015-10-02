@@ -39,18 +39,18 @@ def CreateDir():
     
 # Create or read index counter of files
 def Index():
-    while not os.path.isfile('img/index'):
-        index = open("img/index", "w")
+    while not os.path.isfile(os.path.abspath('img/index')):
+        index = open(os.path.abspath("img/index"), "w")
         index.write("1")
         index.close()
-    index = open("img/index", "r")
+    index = open(os.path.abspath("img/index"), "r")
     global i
     i = index.read().strip()
     index.close()
     
 # Initial XML file initialization
 def WriteXML(i):
-    xml = open("img/img-%s.xml" % i , "w")
+    xml = open(os.path.abspath("img/img-%s.xml" % i), "w")
     init = """<?xml version="1.0" standalone="no"?>
     <xournal version="0.4.5">
     <title>Xournal document - see http://math.mit.edu/~auroux/software/xournal/</title>
@@ -65,21 +65,24 @@ def WriteXML(i):
 
 # Initial XML file gzip compression
 def GzipXML(i):
-    xml = open("img/img-%s.xml" % i , "rb")
-    xmlgz = gzip.open("img/img-%s.xml.gz" % i, "wb")
+    xml = open(os.path.abspath("img/img-%s.xml" % i), "rb")
+    xmlgz = gzip.open(os.path.abspath("img/img-%s.xml.gz" % i), "wb")
     xmlgz.writelines(xml)
     xml.close()
     xmlgz.close()
-    os.remove("img/img-%s.xml" % i)
+    os.remove(os.path.abspath("img/img-%s.xml" % i))
 
 # Initial xournal file creation
 def CreateXOJ (i):
-    os.rename("img/img-%s.xml.gz" % i, "img/img-%s.xoj" % i)
+    path_source = os.path.abspath("img/img-%s.xml.gz" % i)
+    path_destination = os.path.abspath("img/img-%s.xoj" % i)
+    os.rename(path_source, path_destination)
     # Now, a blank initialized Xournal file has been created and is ready to work
     
 # Open xournal with our file
 def OpenXournal(i):
-    os.popen("xournal img/img-%s.xoj" % i, )
+    path = os.path.abspath("img/img-%s.xoj" % i)
+    os.popen("xournal %s" % path, )
     
 # Save in PDF
 # PDF saving from command line is not available in xournal for now
@@ -87,8 +90,11 @@ def OpenXournal(i):
 
 # Crop PDF file
 def PdfCrop(i):
-    os.popen("pdfcrop --pdftexcmd=pdftex --hires img/img-%s.pdf" % i)
-    os.rename("img/img-%s-crop.pdf" % i, "img/img-%s.pdf" % i)
+    path_source = os.path.abspath("img/img-%s.pdf" % i)
+    os.popen("pdfcrop --pdftexcmd=pdftex --hires %s" % path_source)
+    path_cropped = os.path.abspath("img/img-%s-crop.pdf" % i)
+    path_destination = os.path.abspath("img/img-%s.pdf" % i)
+    os.rename(path_cropped, path_destination)
     
 # Return LaTeX insertion code
 def LatexInsert(i):
@@ -98,7 +104,8 @@ def LatexInsert(i):
     # outpout.close()
     
     # Copying outpout to clipboard
-    pyperclip.copy("\includegraphics[scale=1]{img/img-%s.pdf}" % i)
+    path = os.path.abspath("img/img-%s.pdf" % i)
+    pyperclip.copy("\includegraphics[scale=1]{%s}" % path)
     # Now the outpout is in your clipboard. You just have to Ctrl + V to paste it where you want.
     # Try to paste automatically (doesn't work in every case)
     spam=pyperclip.paste()
@@ -106,7 +113,7 @@ def LatexInsert(i):
 # Increment index
 def Increment(i):
     i = int(i) +1
-    index = open("img/index", "w")
+    index = open(os.path.abspath("img/index"), "w")
     index.write("%s" %i)
     index.close()
 
