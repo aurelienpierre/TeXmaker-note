@@ -10,7 +10,7 @@
 #                                                                          
 #                                                   GNU Public License v3                           
 #                                                                          
-#                                        Copyright 2013 - Aurelien PIERRE                     
+#                                        Copyright 2013/2015 - Aurelien PIERRE                     
 # https://aurelienpierre.com - aurelien@aurelienpierre.com          
 #                                                                          
 #                                                                          
@@ -28,7 +28,24 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>    
 
 ## Loading modules ##
-import platform ,  os ,  sys ,  gzip , pyperclip
+import platform ,  os ,  sys ,  gzip , pyperclip, subprocess
+from time import sleep
+
+## Log file for debugging purposes
+class Logger(object):
+    def __init__(self):
+        self.terminal = sys.stdout
+        self.log = open("texmaker-note.log", "a")
+
+    def write(self, message):
+        self.terminal.write(message)
+        self.log.write(message)  
+
+    def flush(self):
+        #this flush method is needed for python 3 compatibility.
+        #this handles the flush command by doing nothing.
+        #you might want to specify some extra behavior here.
+        pass    
 
 ## Functions ##
 
@@ -36,6 +53,8 @@ import platform ,  os ,  sys ,  gzip , pyperclip
 def CreateDir():
     if not os.path.exists("img"):
         os.makedirs("img")
+        
+        sys.stdout.write("= Base directory created =\n")
     
 # Create or read index counter of files
 def Index():
@@ -43,10 +62,15 @@ def Index():
         index = open(os.path.abspath("img/index"), "w")
         index.write("1")
         index.close()
+        
+        sys.stdout.write("= Index initialized =\n")
+        
     index = open(os.path.abspath("img/index"), "r")
     global i
     i = index.read().strip()
     index.close()
+    
+    sys.stdout.write("---\nIndex : %s\n" % i)
     
 # Initial XML file initialization
 def WriteXML(i):
@@ -62,6 +86,8 @@ def WriteXML(i):
     </xournal>"""
     xml.write(init)
     xml.close()
+    
+    sys.stdout.write("Template Xournal file : \n\tcreated\n")
 
 # Initial XML file gzip compression
 def GzipXML(i):
@@ -71,44 +97,65 @@ def GzipXML(i):
     xml.close()
     xmlgz.close()
     os.remove(os.path.abspath("img/img-%s.xml" % i))
+    
+    sys.stdout.write("\tcompressed\n")
 
 # Initial xournal file creation
-def CreateXOJ (i):
+def CreateXOJ(i):
     path_source = os.path.abspath("img/img-%s.xml.gz" % i)
     path_destination = os.path.abspath("img/img-%s.xoj" % i)
     os.rename(path_source, path_destination)
-    # Now, a blank initialized Xournal file has been created and is ready to work
+    
+    sys.stdout.write("\tready to use\n")
     
 # Open xournal with our file
 def OpenXournal(i):
     path = os.path.abspath("img/img-%s.xoj" % i)
-    os.popen("xournal %s" % path, )
+    process = subprocess.Popen(['xournal', path], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    process.wait()
+    
+    for line in process.stdout:
+        sys.stdout.write(line)
+    
+    sys.stdout.write("\tclosed\n")
     
 # Save in PDF
 # PDF saving from command line is not available in xournal for now
 # You have to type Ctrl + E in Xournal to export in PDF, then Ctrl + S to save and Ctrl + Q to exit the software
 
+# Check if the PDF file was exported
+def PdfCheck(i):
+    if not os.path.isfile(os.path.abspath("img/img-%s.pdf" % i)):
+        sys.stderr.write("Warning ! You didn't save your graphic as a PDF\n")
+        sleep(1)
+        sys.stderr.write("Xournal will re-open in 2 sec\n")
+        sleep(2)
+        OpenXournal(i)
+    
 # Crop PDF file
 def PdfCrop(i):
     path_source = os.path.abspath("img/img-%s.pdf" % i)
-    os.popen("pdfcrop --pdftexcmd=pdftex --hires %s" % path_source)
+    sys.stdout.write("%s will be cropped...\n" % path_source)
+    
+    process = subprocess.Popen(['pdfcrop', '--pdftexcmd=pdftex', '--hires', path_source], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    process.wait()
+    
+    for line in process.stdout:
+        sys.stdout.write(line)
+    
     path_cropped = os.path.abspath("img/img-%s-crop.pdf" % i)
     path_destination = os.path.abspath("img/img-%s.pdf" % i)
     os.rename(path_cropped, path_destination)
     
 # Return LaTeX insertion code
 def LatexInsert(i):
-    # Creating temp file for debugging purpose
-    # outpout = open("img/temp-%s.tmp" % i , "w")
-    # outpout.write("\includegraphics[scale=1]{img/img-%s.pdf}" % i)
-    # outpout.close()
-    
     # Copying outpout to clipboard
-    path = os.path.abspath("img/img-%s.pdf" % i)
+    path = os.path.relpath("img/img-%s.pdf" % i)
     pyperclip.copy("\includegraphics[scale=1]{%s}" % path)
     # Now the outpout is in your clipboard. You just have to Ctrl + V to paste it where you want.
     # Try to paste automatically (doesn't work in every case)
     spam=pyperclip.paste()
+    sys.stdout.write("LaTeX command copied in you clipboard :\n \includegraphics[scale=1]{%s}" % path)
     
 # Increment index
 def Increment(i):
@@ -116,16 +163,20 @@ def Increment(i):
     index = open(os.path.abspath("img/index"), "w")
     index.write("%s" %i)
     index.close()
-
+    
+    sys.stdout.write("\nIndex updated\n---\n")
+    
 ## Programm sequence ##
 
 if __name__ == "__main__":
+    sys.stdout = Logger()
     CreateDir()
     Index()
     WriteXML(i)
     GzipXML(i)
     CreateXOJ(i)
     OpenXournal(i)
+    PdfCheck(i)
     PdfCrop(i)
     LatexInsert(i)
     Increment(i)
